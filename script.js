@@ -36,7 +36,6 @@ class Tree {
 
     delete(value){
         const nodeInfo = this.find(value);
-
         if(nodeInfo===null) return
         this.deleteNode(nodeInfo[0],nodeInfo[1])
         
@@ -59,8 +58,10 @@ class Tree {
                 previous_node[position]=node.right;
             }
         }else{
+            
             const replacement_node = this.findReplacement(node);
-            node === replacement_node[1]
+            node.data = replacement_node[1].data
+            console.log(replacement_node[0], replacement_node[1])
             return this.deleteNode(replacement_node[0], replacement_node[1]);
         }
     }
@@ -73,15 +74,19 @@ class Tree {
         if(node.left === null) return [previous_node,node]
         return this.findReplacement(node.left, node)
     }
-    find (value, previous_node = null, node=this.root){
-
-        if (node.data === value && previous_node !== null) return [previous_node,node]
-        if(value > node.data){
-            if(node.right === null) return null
-            return this.find(value,node,node.right)
+    find (value, previous_node = null, current_node=this.root){
+        if (current_node.data === value && previous_node !== null) {
+            console.log(current_node)
+            console.log([previous_node,current_node])
+            return [previous_node,current_node]
+        }
+        if(value > current_node.data){
+            if(current_node.right === null) return null
+            console.log([current_node,current_node.right])
+            return this.find(value,current_node,current_node.right)
         }else{
-            if(node.left === null) return null
-            return this.find(value,node,node.left)
+            if(current_node.left === null) return null
+            return this.find(value,current_node,current_node.left)
         }
     }
 }
@@ -147,11 +152,12 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 const test = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 
 const tree = new Tree(test)
-tree.insert(0)
+tree.insert(310)
+tree.insert(311)
+tree.insert(309)
 prettyPrint(tree.root)  
-console.log(tree.find(4))
-tree.delete(4)
-prettyPrint(tree.root) 
+tree.delete(67)
+// prettyPrint(tree.root) 
 
 // Write an insert and delete functions which accepts a value to insert/delete 
 // (you’ll have to deal with several cases for delete such as when a node has children or not).
