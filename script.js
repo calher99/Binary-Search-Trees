@@ -33,47 +33,39 @@ class Tree {
             return
         }
     }
+    delete(value, node= this.root){
+        let minRight;
+        if(node === null) return null     //Case not found value & exit
 
-    delete(value){
-        const nodeInfo = this.find(value);
-        if(nodeInfo===null) return
-        this.deleteNode(nodeInfo[0],nodeInfo[1])
-        
-    }
-
-    deleteNode(previous_node,node){
-        let position = '';
-        if (previous_node.data > node.data) {
-            position='left';
-        }else{
-            position='right';
-        }
-        
-        if (node.right===null && node.left===null){
-            previous_node[position]=null;
-        }else if (node.right===null || node.left===null){
-            if(node.right === null){
-                previous_node[position]=node.left;
-            }else{
-                previous_node[position]=node.right;
+        if(value < node.data){
+            if ( node.left ) {
+                node.left = this.delete( value, node.left );
+              }//else it will return an empty node --> return null.
+        }else if (value > node.data){
+            if ( node.right ) {
+                node.right = this.delete( value, node.right );
+              }
+        }else{       // at this point, value === node.value
+            if ( node.left === null && node.right === null ) {//CASE 1: leaf
+                node = null;
+            }else if( node.left === null ) { //CASE 2: One subnode only
+                node = node.right;
+            }else if ( node.right === null ) {//CASE 2: One subnode only
+                node = node.left;
+            }else{ //CASE 3: node has left and right
+                minRight   = this.findMinValue( node.right );
+                node.data = minRight.data;
+                node.right = this.delete( minRight.data, node.right );
             }
-        }else{
-            
-            const replacement_node = this.findReplacement(node);
-            node.data = replacement_node[1].data
-            console.log(replacement_node[0], replacement_node[1])
-            return this.deleteNode(replacement_node[0], replacement_node[1]);
         }
+        return node;
     }
-
-    findReplacement(node , previous_node = null){
-        if(previous_node===null){
-            if(node.right.left===null) return [node,node.right]
-            return this.findReplacement(node.right,node)
-        }
-        if(node.left === null) return [previous_node,node]
-        return this.findReplacement(node.left, node)
+ 
+    findMinValue (node){
+        if (node.left === null)return node;
+        return this.findMinValue(node.left)
     }
+    
     find (value, previous_node = null, current_node=this.root){
         if (current_node.data === value && previous_node !== null) {
             console.log(current_node)
@@ -90,6 +82,15 @@ class Tree {
         }
     }
 }
+
+function minValue(root) {
+    let min = root.data;
+    while (root != null) {
+        min = root.data;
+        root = root.left;
+    }
+    return min;
+};
 
 function buildTree(array){
     const sorted= quicksort(array)
@@ -156,8 +157,9 @@ tree.insert(310)
 tree.insert(311)
 tree.insert(309)
 prettyPrint(tree.root)  
-tree.delete(67)
-// prettyPrint(tree.root) 
+console.log('---------------------------------')
+tree.delete(8)
+prettyPrint(tree.root) 
 
 // Write an insert and delete functions which accepts a value to insert/delete 
 // (you’ll have to deal with several cases for delete such as when a node has children or not).
