@@ -66,31 +66,40 @@ class Tree {
         return this.findMinValue(node.left)
     }
     
-    find (value, previous_node = null, current_node=this.root){
-        if (current_node.data === value && previous_node !== null) {
-            console.log(current_node)
-            console.log([previous_node,current_node])
-            return [previous_node,current_node]
+    find (value, node=this.root){
+        if(node===null || node.data === value) return node
+        // Key is greater than root's key
+        if (value > node.data) return this.find(value, node.right);
+        // Key is smaller than root's key
+        return this.find(value, node.left);
+    }
+
+    bfs (doSomething){
+        const array =[this.root]
+        while (array.length>0){
+            doSomething(array[0])
+            if (array[0].left !== null){
+                array.push(array[0].left)
+            }
+            if (array[0].right !== null){
+                array.push(array[0].right)
+            }
+            array.shift()
         }
-        if(value > current_node.data){
-            if(current_node.right === null) return null
-            console.log([current_node,current_node.right])
-            return this.find(value,current_node,current_node.right)
-        }else{
-            if(current_node.left === null) return null
-            return this.find(value,current_node,current_node.left)
+    }
+    dfs(doSomething, node=this.root){
+        doSomething(node)
+        if(node === null) return;
+        if(node.left!== null){
+            this.dfs(doSomething,node.left)
+        }
+        if (node.right !== null){
+            this.dfs(doSomething,node.right)
         }
     }
 }
 
-function minValue(root) {
-    let min = root.data;
-    while (root != null) {
-        min = root.data;
-        root = root.left;
-    }
-    return min;
-};
+
 
 function buildTree(array){
     const sorted= quicksort(array)
@@ -139,6 +148,10 @@ function deleteDuplicates (array){
         }
     }
 }
+
+const printData = (node) =>{
+    console.log(node.data)
+}
  
 const prettyPrint = (node, prefix = '', isLeft = true) => {
     if (node.right !== null) {
@@ -160,6 +173,8 @@ prettyPrint(tree.root)
 console.log('---------------------------------')
 tree.delete(8)
 prettyPrint(tree.root) 
+tree.dfs(printData)
+
 
 // Write an insert and delete functions which accepts a value to insert/delete 
 // (you’ll have to deal with several cases for delete such as when a node has children or not).
