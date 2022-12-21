@@ -79,10 +79,10 @@ class Tree {
         while (array.length>0){
             doSomething(array[0])
             if (array[0].left !== null){
-                array.push(array[0].left)
+                array.push(array[0].left);
             }
             if (array[0].right !== null){
-                array.push(array[0].right)
+                array.push(array[0].right);
             }
             array.shift()
         }
@@ -95,6 +95,21 @@ class Tree {
         }
         if (node.right !== null){
             this.dfs(doSomething,node.right)
+        }
+    }
+    height (node){
+       if(!node) return 0
+       return 1+ Math.max(this.height(node.right), this.height(node.left))
+    }
+
+    depth (nodeSearch, node= this.root, edgeCount=0){
+        if(node===null)return
+        if(node.data === nodeSearch.data) return edgeCount;
+
+        if(node.data < nodeSearch.data){
+            return this.depth(nodeSearch, node.right, (edgeCount+1))
+        }else{
+            return this.depth(nodeSearch, node.left, (edgeCount+1))
         }
     }
 }
@@ -173,7 +188,7 @@ prettyPrint(tree.root)
 console.log('---------------------------------')
 tree.delete(8)
 prettyPrint(tree.root) 
-tree.dfs(printData)
+console.log(tree.depth(tree.find(67)))
 
 
 // Write an insert and delete functions which accepts a value to insert/delete 
